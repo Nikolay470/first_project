@@ -43,34 +43,37 @@ else:
 
 iteration = True    
 while iteration:
-    select_user = int(print("1. Вход 2. Регистрация\n"))
+    select_user = int(input("1.Вход 2.Регистрация 3.Выход\n"))
     result = False
     if select_user == 1:
-        login = print("Введите логин:\n")
-        password = print("Введите пароль:\n")
+        login = input("Введите логин:\n")
+        password = input("Введите пароль:\n")
         if manag_db.entrains(login, password):
             result = True
             iteration = False
     elif select_user == 2:
         data_user = dict()
-        name_user = print("Введите ваше имя:\n")
+        name_user = input("Введите ваше имя:\n")
         data_user["name"] = name_user
 
-        age_user = print("Введите ваш возраст:\n")
+        age_user = input("Введите ваш возраст:\n")
         data_user["age"] = age_user
 
-        email_user = print("Придумайте логин:\n")
+        email_user = input("Введите почту. Этот адрес будет вашим логином:\n")
         data_user["email"] = email_user
 
-        password_user = print("Придумайте пароль:\n")
+        password_user = input("Придумайте пароль:\n")
         data_user["password"] = password_user
 
         if manag_db.registration(data_user):
             print("Регистрация прошла успешно!")
             result = True
             iteration = False
+    elif select_user == 3:
+        iteration = False        
     else:
         print("Выберите действие\n")
+
 if result:
     iteration = True    
 

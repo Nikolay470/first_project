@@ -1,6 +1,6 @@
 import sqlite3 as sq
 
-con = sq.connect("data_bases/data_bases.db")
+con = sq.connect("src/data_bases/data_bases.db")
 con.execute("PRAGMA foreign_keys = 1")
 cur = con.cursor()
 
