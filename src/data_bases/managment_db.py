@@ -34,17 +34,17 @@ def registration(data):
 
 
 def entrains(log, passw):
-    try:
-        is_registered = cur.execute("""SELECT id_user FROM accounts WHERE
-                                    login = ?, password = ?""", log, passw).fetchone()
-        if is_registered is None:
-            print("Данные введены неверно или пользователь не зарегистрирован")
-            return False
-        else:
-            return True
-    except:
-        print("Произошла ошибка при входе в аккаунт")
+    connect = sq.connect("src/data_bases/data_bases.db")
+    connect.execute("PRAGMA foreign_keys = 1")
+    cursor = connect.cursor()
+    is_registered = cursor.execute("""SELECT id_user FROM accounts WHERE
+                                login = ? AND password = ?""", [log, passw]).fetchone()
+    if is_registered is None:
+        print("Данные введены неверно или пользователь не зарегистрирован")
         return False
+    else:
+        return True
+    
 
 def changed_name_user(user_id, new_name):
     try:
