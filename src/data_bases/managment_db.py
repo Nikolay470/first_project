@@ -1,42 +1,37 @@
 import sqlite3 as sq
 
 
-con = sq.connect("src/data_bases/data_bases.db")
-con.execute("PRAGMA foreign_keys = 1")
-cur = con.cursor()
+# con = sq.connect("src/data_bases/data_bases.db")
+# con.execute("PRAGMA foreign_keys = 1")
+# cur = con.cursor()
 
 def registration(data):
-    try:
-        con = sq.connect("src/data_bases/data_bases.db")
-        con.execute("PRAGMA foreign_keys = 1")
-        cur = con.cursor()
-        res = (cur.execute("""SELECT login FROM accounts WHERE password = ?""", 
-                    (data["password"])).fetchone())
-        if res is None:
-            try:    
-                cur.execute("""INSERT INTO users (name, age) VALUES (?, ?)""", 
-                            data["name"], data["age"])
-                con.commit()
-                user_id = cur.execute("""SELECT id FROM users WHERE name = ?""", 
-                                    data["name"]).fetchone()
-                cur.execute("""INSERT INTO accounts (id_user, login, password) 
-                            VALUES (?, ?, ?)""", user_id[0], data["email"], 
-                            data["password"])
-                cur.execute("""INSERT INTO email (id_user, email_address)
-                            VALUES (?, ?)""", user_id[0], data["email"])
-                con.commit()
-                con.close()
-                return True
-            except:
-                print("Произошла ошибка при регистрации")
-                con.close()
-                return False
-        else:
-            print("Пользователь с такими данными уже зарегистрирован")
-            con.close()
-            return False
-    except:
-        print("Произошла ошибка при проверке данных в базе")
+    connect = sq.connect("src/data_bases/data_bases.db")
+    connect.execute("PRAGMA foreign_keys = 1")
+    cursor = connect.cursor()
+    user_is_registered = cursor.execute("""SELECT login FROM accounts WHERE
+                                        password = ?""", [data["password"]]).fetchone()
+    print(user_is_registered)
+    if user_is_registered is None:
+        cursor.execute("""INSERT INTO accounts(login, password)
+                       VALUES (?, ?)""", [data["email"], data["password"]])
+        connect.commit()
+    
+        user_id = cursor.execute("""SELECT id_user FROM accounts WHERE
+                                 password = ?""", [data["password"]]).fetchone()
+        
+        cursor.execute("""INSERT INTO users (id, name, age)
+                    VALUES (?, ?, ?)""", [user_id[0], data["name"], data["age"]])
+        connect.commit()
+
+        cursor.execute("""INSERT INTO email (id, email_address)
+                       VALUES (?, ?)""", [user_id[0], data["email"]])
+        connect.commit()
+        return True
+    else:
+        print("Пользователь уже зарегистрирован")
+        return False    
+
 
 def entrains(log, passw):
     try:
@@ -98,5 +93,5 @@ def changed_password_user(user_id, new_password):
         print("Ошибка изменения пароля")
         return False
 # con.commit()
-con.close()
+# con.close()
     
