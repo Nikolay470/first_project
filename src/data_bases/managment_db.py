@@ -27,9 +27,11 @@ def registration(data):
         cursor.execute("""INSERT INTO email (id, email_address)
                        VALUES (?, ?)""", [user_id[0], data["email"]])
         connect.commit()
+        connect.close()
         return True
     else:
         print("Пользователь уже зарегистрирован")
+        connect.close()
         return False    
 
 
@@ -41,57 +43,58 @@ def entrains(log, passw):
                                 login = ? AND password = ?""", [log, passw]).fetchone()
     if is_registered is None:
         print("Данные введены неверно или пользователь не зарегистрирован")
+        connect.close()
         return False
     else:
+        connect.close()
         return True
     
 
 def changed_name_user(user_id, new_name):
-    try:
-        cur.execute("""UPDATE users SET name = ? WHERE id = ?""",
-                    new_name, user_id)
-        con.commit()
-        return True
-    except:
-        print("Ошибка изменения имени")
-        return False
+    connect = sq.connect("src/data_bases/data_bases.db")
+    connect.execute("PRAGMA foreign_keys = 1")
+    cursor = connect.cursor()
+
+    cursor.execute("""UPDATE users SET name = ? WHERE id = ?""", 
+                   [new_name, user_id])
+    connect.commit()
+    connect.close()
+    return True
 
 def changed_age_user(user_id, new_age):
-    try:
-        age = cur.execute("""SELECT age FROM users WHERE id = ?""", 
-                        user_id).fetchone()
-        if age[0] is None:
-            cur.execute("""UPDATE users SET age = ? WHERE id = ?""",
-                        new_age, user_id)
-            con.commit()
-            return True
-        else:
-            return False
-    except:
-        print("Ошибка изменения возраста")
-        return False
+    connect = sq.connect("src/data_bases/data_bases.db")
+    connect.execute("PRAGMA foreign_keys = 1")
+    cursor = connect.cursor()
+
+    cursor.execute("""UPDATE users SET age = ? WHERE id = ?""",
+                   [new_age, user_id])
+    connect.commit()
+    connect.close()
+    return True
 
 def changed_email_user(user_id, new_email):
-    try:
-        cur.execute("""UPDATE email SET email_address = ? WHERE id_user = ?""",
-                    new_email, user_id)
-        cur.execute("""UPDATE accounts SET login = ? WHERE id_user = ?""",
-                    new_email, user_id)
-        con.commit()
-        return True
-    except:
-        print("Ошибка изменения email")
-        return False
+    connect = sq.connect("src/data_bases/data_bases.db")
+    connect.execute("PRAGMA foreign_keys = 1")
+    cursor = connect.cursor()
+
+    cursor.execute("""UPDATE email SET email_address = ? WHERE id = ?""",
+                   [new_email, user_id])
+    connect.commit()
+
+    cursor.execute("""UPDATE accounts SET login = ? WHERE id_user = ?""",
+                   [new_email, user_id])
+    connect.commit()
+    connect.close()
+    return True
+
     
 def changed_password_user(user_id, new_password):
-    try:
-        cur.execute("""UPDATE accounts SET password = ? WHERE id_user = ?""",
-                    new_password, user_id)
-        con.commit()
-        return True
-    except:
-        print("Ошибка изменения пароля")
-        return False
-# con.commit()
-# con.close()
+    connect = sq.connect("src/data_bases/data_bases.db")
+    connect.execute("PRAGMA foreign_keys = 1")
+    cursor = connect.cursor()
+
+    cursor.execute("""UPDATE accounts SET password = ? WHERE id_user = ?""",
+                   [new_password, user_id])
+    connect.commit()
+    connect.close()
     
