@@ -11,6 +11,9 @@ images = list()
 play_list = list()
 favorites_books = list()
 favorites_music = list()
+id_current_user = 0 # переменная для хранения id текущего пользователя
+result_call_func = 0
+id = 1
 
 with open("src/data_json/storis.json", "r") as st:
     storis = json.loads(st.read())
@@ -48,7 +51,9 @@ while iteration:
     if select_user == 1:
         login = input("Введите логин:\n")
         password = input("Введите пароль:\n")
-        if manag_db.entrains(login, password):
+        result_entrains = manag_db.entrains(login, password)
+        if result_entrains[result_call_func]:
+            id_current_user = result_entrains[id]
             result = True
             iteration = False
     elif select_user == 2:
@@ -65,8 +70,10 @@ while iteration:
         password_user = input("Придумайте пароль:\n")
         data_user["password"] = password_user
 
-        if manag_db.registration(data_user):
+        result_registration = manag_db.registration(data_user)
+        if result_registration[result_call_func]:
             print("Регистрация прошла успешно!")
+            id_current_user = result_registration[id]
             result = True
             iteration = False
     elif select_user == 3:
@@ -81,7 +88,7 @@ if result:
         command = int(input("\nВыберите действие\n"
                         + "1. Что почитать?\n2. Интересные истории\n"
                         + "3. Послушать музыку\n4. Фото с котиками\n"
-                        + "5. Завершить\n"))
+                        + "5. Изменить учетные данные\n6. Завершить\n"))
         if command == 1:
             func.print_list(books)
             command = int(input("Какую книгу вы выбрали?\n"))
@@ -136,6 +143,45 @@ if result:
             if command == 1:
                 iteration = False
         elif command == 5:
+            command = int(input("Что вы хотите изменить?\n"
+                                +"1. Имя\n2. Возраст\n3. Email\n4. Пароль\n"
+                                +"5. Вернутся к меню\n"))
+            result_changed = False
+            error_text = "Изменение завершилось с ошибкой"
+            if command ==1:
+                new_name_user = input("Введите новое имя: ")
+                result_changed = manag_db.changed_name_user(id_current_user, new_name_user)
+                if result_changed:
+                    print("Имя успешно заменено")
+                else:
+                    print(error_text)
+            elif command == 2:
+                new_age_user = int(input("Введите новый возраст: "))
+                result_changed = manag_db.changed_age_user(id_current_user, 
+                                                           new_age_user)
+                if result_changed:
+                    print("Возраст изменен успешно")
+                else:
+                    print(error_text)
+            elif command == 3:
+                new_email_user = input("Введите новый email: ")
+                result_changed = manag_db.changed_email_user(id_current_user,
+                                                             new_email_user)
+                if result_changed:
+                    print("Email успешно изменен")
+                else:
+                    print(error_text)
+            elif command == 4:
+                new_password_user = input("Введите новый пароль: ")
+                result_changed = manag_db.changed_password_user(id_current_user,
+                                                                new_password_user)
+                if result_changed:
+                    print("Пароль успешно изменен")
+                else:
+                    print(error_text)
+            elif command == 5:
+                iteration = True
+        elif command == 6:
             iteration = False
         else:
             print("Выберите действие")
