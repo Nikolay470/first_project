@@ -11,7 +11,6 @@ def registration(data):
     cursor = connect.cursor()
     user_is_registered = cursor.execute("""SELECT login FROM accounts WHERE
                                         password = ?""", [data["password"]]).fetchone()
-    print(user_is_registered)
     if user_is_registered is None:
         cursor.execute("""INSERT INTO accounts(login, password)
                        VALUES (?, ?)""", [data["email"], data["password"]])
@@ -28,26 +27,26 @@ def registration(data):
                        VALUES (?, ?)""", [user_id[0], data["email"]])
         connect.commit()
         connect.close()
-        return True
+        return [True, user_id]
     else:
         print("Пользователь уже зарегистрирован")
         connect.close()
-        return False    
+        return [False]    
 
 
 def entrains(log, passw):
     connect = sq.connect("src/data_bases/data_bases.db")
     connect.execute("PRAGMA foreign_keys = 1")
     cursor = connect.cursor()
-    is_registered = cursor.execute("""SELECT id_user FROM accounts WHERE
+    user_id = cursor.execute("""SELECT id_user FROM accounts WHERE
                                 login = ? AND password = ?""", [log, passw]).fetchone()
-    if is_registered is None:
+    if user_id is None:
         print("Данные введены неверно или пользователь не зарегистрирован")
         connect.close()
-        return False
+        return [False]
     else:
         connect.close()
-        return True
+        return [True, user_id]
     
 
 def changed_name_user(user_id, new_name):

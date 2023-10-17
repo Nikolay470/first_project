@@ -11,8 +11,8 @@ def print_list(spisok):
 def print_image(img):
     print(img)
 
-def description_book_and_film(valuue, data_structure):
-    data = data_structure[valuue]
+def description_book(name_book, data_structure):
+    data = data_structure[name_book]
     print(f"Автор: {data[author]}\nГод релиза: {data[year_releaze]}\n" 
           +f"Описание: {data[short_description]}")
 

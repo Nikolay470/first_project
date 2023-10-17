@@ -9,8 +9,8 @@ books = list()
 description = dict()
 images = list()
 play_list = list()
-favorites_books = list()
-favorites_music = list()
+favorites_books = dict()
+favorites_music = dict()
 id_current_user = 0 # переменная для хранения id текущего пользователя
 result_call_func = 0
 id = 1
@@ -56,6 +56,8 @@ while iteration:
             id_current_user = result_entrains[id]
             result = True
             iteration = False
+        else:
+            print("Произошла ошибка входа")
     elif select_user == 2:
         data_user = dict()
         name_user = input("Введите ваше имя:\n")
@@ -74,8 +76,13 @@ while iteration:
         if result_registration[result_call_func]:
             print("Регистрация прошла успешно!")
             id_current_user = result_registration[id]
+            favorites_books[id_current_user] = []
+            favorites_music[id_current_user] = []
+
             result = True
             iteration = False
+        else:
+            print("Произошла ошибка регистрации\n")
     elif select_user == 3:
         iteration = False        
     else:
@@ -90,20 +97,41 @@ if result:
                         + "3. Послушать музыку\n4. Фото с котиками\n"
                         + "5. Изменить учетные данные\n6. Завершить\n"))
         if command == 1:
-            func.print_list(books)
-            command = int(input("Какую книгу вы выбрали?\n"))
-            selection_book = books[command - 1]
-            func.description_book_and_film(selection_book, books)
-            command = int(input("1. Прочитать\n2. В избранное\n"))
+            command = int(input("Посмотреть в избранном\n1.Да 2.Нет\n"))
             if command == 1:
-                print("Открывается электронный вариант книги\n")
-                iteration = False
-            elif command == 2:
-                favorites_books.append(selection_book)
-                print("Книга добавлена в избранное")
-            else:
-                print("Укажите номер действия\n")
-                                
+                func.print_list(favorites_books[id_current_user])
+                command = int(input("Выберите книгу\nВернутся к меню (введите 0)"))
+                if command == 0:
+                    iteration = True
+                else:
+                    selection_book = favorites_books[id_current_user][command - 1]
+                    func.description_book(selection_book, description)
+                    command = int(input("1. Прочитать\n"
+                                        +"2. Удалить из избранного\n"
+                                        +"3. Вернуться к меню\n"))
+                    if command == 1:
+                        print("Открывается электронный вариант книги\n")
+                        iteration = False
+                    elif command == 2:
+                        favorites_books[id_current_user].remove(selection_book)
+                        print("Книга удалена из избранного")
+                    elif command == 3:
+                        iteration = True
+            elif command == 2:    
+                func.print_list(books)
+                command = int(input("Какую книгу вы выбрали?\n"))
+                selection_book = books[command - 1]
+                func.description_book(selection_book, description)
+                command = int(input("1. Прочитать\n2. В избранное\n"
+                                    +"3. Вернуться к меню\n"))
+                if command == 1:
+                    print("Открывается электронный вариант книги\n")
+                    iteration = False
+                elif command == 2:
+                    favorites_books[id_current_user].append(selection_book)
+                    print("Книга добавлена в избранное")
+                elif command == 3:
+                    iteration = True
         elif command == 2:
             func.print_list(storis)
             command = int(input("Какую историю вы хотите прочитать?\n"))
@@ -114,14 +142,14 @@ if result:
             func.print_list(play_list)
             command = int(input("Какаю песню вы выбрали?\n"))
             selection_music = play_list[command - 1]
-            func.music_decription(selection_music, play_list)
+            func.music_decription(selection_music, description)
             command = int(input("1. Слушать\n2. Скачать\n3. В избранное\n"))
             if command == 1:
                 print("Начинается пролушивание")
             elif command == 2:
                 print("Начинается скачивание...")
             elif command == 3:
-                favorites_music.append(selection_music)
+                favorites_music[id_current_user].append(selection_music)
                 print("Песня добавлена в избранное")
             else:
                 print("Введите номер действия")
