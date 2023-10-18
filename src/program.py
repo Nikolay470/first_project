@@ -113,8 +113,11 @@ if result:
                         print("Открывается электронный вариант книги\n")
                         iteration = False
                     elif command == 2:
-                        favorites_books[id_current_user].remove(selection_book)
-                        print("Книга удалена из избранного")
+                        try:
+                            favorites_books[id_current_user].remove(selection_book)
+                            print("Книга удалена из избранного")
+                        except:
+                            print("Удаление завершилось с ошибкой")
                     elif command == 3:
                         iteration = True
             elif command == 2:    
@@ -139,20 +142,47 @@ if result:
             print("Показываем текст истории")
 
         elif command == 3:
-            func.print_list(play_list)
-            command = int(input("Какаю песню вы выбрали?\n"))
-            selection_music = play_list[command - 1]
-            func.music_decription(selection_music, description)
-            command = int(input("1. Слушать\n2. Скачать\n3. В избранное\n"))
+            command = int(input("Хотите посмотреть избранные песни?\n"
+                                +"1.Да 2.Нет"))
             if command == 1:
-                print("Начинается пролушивание")
-            elif command == 2:
-                print("Начинается скачивание...")
-            elif command == 3:
-                favorites_music[id_current_user].append(selection_music)
-                print("Песня добавлена в избранное")
-            else:
-                print("Введите номер действия")
+                func.print_list(favorites_music[id_current_user])
+                command = int(input("Выберите песню\n"
+                                    +"Вернуться к меню (введите 0)\n"))
+                if command == 0:
+                    iteration = True
+                else:
+                    selection_music = favorites_music[id_current_user][command - 1]
+                    func.music_decription(selection_music, description)
+                    command = int(input("1.Скачать 2. Прослушать\n"
+                                        +"3.Удалить из избранного" 
+                                        +"4.Вернуться к меню (введите 0)"))
+                    if command == 0:
+                        iteration = True
+                    elif command == 1:
+                        print("Песня скачивается...")
+                    elif command == 2:
+                        print("Начинается проигрывание песни...")
+                    elif command == 3:
+                        try:
+                            favorites_music[id_current_user].remove(selection_music)
+                            print("Песня удалена")
+                        except:
+                            print("Удаление завершилось с ошибкой")
+            elif command == 2:                    
+                func.print_list(play_list)
+                command = int(input("Какаю песню вы выбрали?\n"))
+                selection_music = play_list[command - 1]
+                func.music_decription(selection_music, description)
+                command = int(input("1. Слушать\n2. Скачать\n3. В избранное\n"))
+                if command == 1:
+                    print("Начинается пролушивание")
+                elif command == 2:
+                    print("Начинается скачивание...")
+                elif command == 3:
+                    favorites_music[id_current_user].append(selection_music)
+                    print("Песня добавлена в избранное")
+                else:
+                    print("Введите номер действия")
         elif command == 4:
             swap = True
             count = 0
