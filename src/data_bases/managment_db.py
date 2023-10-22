@@ -27,7 +27,7 @@ def registration(data):
                        VALUES (?, ?)""", [user_id[0], data["email"]])
         connect.commit()
         connect.close()
-        return [True, user_id]
+        return [True, user_id[0]]
     else:
         print("Пользователь уже зарегистрирован")
         connect.close()
@@ -46,7 +46,7 @@ def entrains(log, passw):
         return [False]
     else:
         connect.close()
-        return [True, user_id]
+        return [True, user_id[0]]
     
 
 def changed_name_user(user_id, new_name):
